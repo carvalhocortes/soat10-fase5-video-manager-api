@@ -1,6 +1,7 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { AuthMiddleware } from '../auth/authMiddleware';
-import { ErrorMiddleware } from '../auth/errorMiddleware';
+import { AuthMiddleware } from '../middlewares/authMiddleware';
+import { ErrorMiddleware } from '../middlewares/errorMiddleware';
+import { ResponseMiddleware } from '../middlewares/responseMiddleware';
 
 export const uploadFilesHandler: APIGatewayProxyHandler = async (event) => {
   try {
@@ -8,8 +9,7 @@ export const uploadFilesHandler: APIGatewayProxyHandler = async (event) => {
     const user = await auth.authenticate(event);
 
     const result = { message: 'Upload autorizado', user };
-
-    return { statusCode: 201, body: JSON.stringify(result) };
+    return ResponseMiddleware.handle(result, 201);
   } catch (err: any) {
     return ErrorMiddleware.handle(err);
   }

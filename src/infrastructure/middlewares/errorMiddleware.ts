@@ -3,6 +3,7 @@ export class ErrorMiddleware {
     const statusCode = err?.statusCode || 500;
     return {
       statusCode,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         httpCode: statusCode,
         internalCode: err?.internalCode || 'INTERNAL_SERVER_ERROR',
