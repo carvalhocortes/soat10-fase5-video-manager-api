@@ -1,3 +1,6 @@
+# Repo Configs
+.vscode/
+
 # Logs
 logs
 *.log
@@ -137,3 +140,44 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Sistema operacional - Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+
+# Sistema operacional - macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+*.tfplan
+*.auto.tfvars
+
+# AWS
+.aws/
+
+# Jest
+jest_0
+
+# Husky
+.husky/_
