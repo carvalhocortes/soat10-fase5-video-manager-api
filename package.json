@@ -1,0 +1,56 @@
+{
+  "name": "fiap-soat10-auth-api",
+  "version": "1.0.0",
+  "main": "handler.js",
+  "repository": "https://github.com/carvalhocortes/soat10-fase5-authorization-api.git",
+  "author": "Fernando Cortes <fernando@carvalhocortes.com.br>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc ./src/*.ts --outDir ./dist",
+    "prepare": "husky install",
+    "prepare-dist": "cp package.json dist/ && cp package-lock.json dist/ || true",
+    "install-prod": "cd dist && npm install --omit=dev --ignore-scripts",
+    "lint": "eslint 'src/**/*.{ts,tsx}' --fix",
+    "zip": "cd dist && zip -r ../lambda.zip .",
+    "deploy-build": "npm run build && npm run prepare-dist && npm run install-prod && npm run zip",
+    "swagger": "swagger-ui-watcher ./doc/openapi.yml --port 3000",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:coverage:watch": "jest --coverage --watch",
+    "test:ci": "jest --coverage --watchAll=false --passWithNoTests"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.808.0",
+    "aws-jwt-verify": "^5.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.18.0",
+    "@types/aws-lambda": "^8.10.152",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.15.17",
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
+    "@typescript-eslint/parser": "^8.39.1",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.14.0",
+    "husky": "^8.0.0",
+    "jest": "^30.0.5",
+    "lint-staged": "^15.3.0",
+    "swagger-ui-watcher": "^2.1.14",
+    "ts-jest": "^29.4.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.20.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.tf": [
+      "terraform fmt",
+      "git add"
+    ]
+  }
+}
