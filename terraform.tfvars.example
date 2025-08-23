@@ -1,0 +1,6 @@
+# Configurações da AWS
+aws_region     = "us-east-1"
+aws_account_id = "123456789012"  # Substitua pelo seu Account ID
+
+# Exemplo de como gerar uma chave segura:
+# node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
