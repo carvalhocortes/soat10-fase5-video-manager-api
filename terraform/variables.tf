@@ -1,17 +1,17 @@
-variable "aws_region" {
+variable "AWS_REGION" {
   type    = string
   default = "us-west-2"
 }
 
-variable "aws_account_id" {
+variable "AWS_ACCOUNT_ID" {
   type    = string
   default = "548226336065"
 }
 
-variable "COGNITO_USER_POOL_ID" {
-  type = string
+data "aws_ssm_parameter" "cognito_user_pool_id" {
+  name = "/soat10/authorization-api/cognito_user_pool_id"
 }
 
-variable "COGNITO_CLIENT_ID" {
-  type = string
+data "aws_ssm_parameter" "cognito_client_id" {
+  name = "/soat10/authorization-api/cognito_client_id"
 }
