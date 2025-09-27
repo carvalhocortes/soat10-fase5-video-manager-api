@@ -181,3 +181,6 @@ jest_0
 
 # Husky
 .husky/_
+
+# LocalStack
+.localstack/
