@@ -5,12 +5,17 @@ variable "AWS_REGION" {
 
 variable "AWS_ACCOUNT_ID" {
   type    = string
-  default = "548226336065"
+  default = "339713125069"
 }
 
 variable "S3_BUCKET_NAME" {
   type    = string
-  default = "video-manager-bucket"
+  default = "soat10-video-manager-bucket"
+}
+
+variable "DYNAMODB_TABLE_NAME" {
+  type    = string
+  default = "file_uploads"
 }
 
 data "aws_ssm_parameter" "cognito_user_pool_id" {

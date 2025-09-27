@@ -11,7 +11,7 @@ resource "aws_lambda_function" "upload_files" {
     variables = {
       COGNITO_USER_POOL_ID   = data.aws_ssm_parameter.cognito_user_pool_id.value
       COGNITO_CLIENT_ID      = data.aws_ssm_parameter.cognito_client_id.value
-      FILE_UPLOAD_TABLE_NAME = aws_dynamodb_table.file_uploads.name
+      FILE_UPLOAD_TABLE_NAME = var.DYNAMODB_TABLE_NAME
       S3_BUCKET_NAME         = var.S3_BUCKET_NAME
     }
   }
@@ -30,7 +30,7 @@ resource "aws_lambda_function" "download_files" {
     variables = {
       COGNITO_USER_POOL_ID   = data.aws_ssm_parameter.cognito_user_pool_id.value
       COGNITO_CLIENT_ID      = data.aws_ssm_parameter.cognito_client_id.value
-      FILE_UPLOAD_TABLE_NAME = aws_dynamodb_table.file_uploads.name
+      FILE_UPLOAD_TABLE_NAME = var.DYNAMODB_TABLE_NAME
       S3_BUCKET_NAME         = var.S3_BUCKET_NAME
     }
   }
@@ -49,7 +49,7 @@ resource "aws_lambda_function" "list_files" {
     variables = {
       COGNITO_USER_POOL_ID   = data.aws_ssm_parameter.cognito_user_pool_id.value
       COGNITO_CLIENT_ID      = data.aws_ssm_parameter.cognito_client_id.value
-      FILE_UPLOAD_TABLE_NAME = aws_dynamodb_table.file_uploads.name
+      FILE_UPLOAD_TABLE_NAME = var.DYNAMODB_TABLE_NAME
       S3_BUCKET_NAME         = var.S3_BUCKET_NAME
     }
   }
@@ -66,7 +66,7 @@ resource "aws_lambda_function" "s3_event_handler" {
 
   environment {
     variables = {
-      FILE_UPLOAD_TABLE_NAME = aws_dynamodb_table.file_uploads.name
+      FILE_UPLOAD_TABLE_NAME = var.DYNAMODB_TABLE_NAME
       S3_BUCKET_NAME         = var.S3_BUCKET_NAME
     }
   }
