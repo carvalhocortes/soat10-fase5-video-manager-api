@@ -12,7 +12,7 @@ export const downloadFilesHandler: APIGatewayProxyHandler = async (event) => {
     const auth = new AuthMiddleware();
     const user = await auth.authenticate(event);
 
-    const userId = user.userId || user.email;
+    const userId = user.username;
 
     const fileId = event.pathParameters?.fileId;
     if (!fileId) {

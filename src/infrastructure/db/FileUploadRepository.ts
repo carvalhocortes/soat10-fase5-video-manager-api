@@ -10,13 +10,7 @@ export class FileUploadRepository {
   constructor() {
     const dynamoClient = new DynamoDBClient({
       region: process.env.AWS_REGION!,
-      credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-        sessionToken: process.env.AWS_SESSION_TOKEN!,
-      },
     });
-
     this.client = DynamoDBDocumentClient.from(dynamoClient);
     this.tableName = process.env.FILE_UPLOAD_TABLE_NAME!;
   }

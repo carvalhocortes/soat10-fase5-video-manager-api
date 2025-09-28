@@ -9,7 +9,7 @@ export const listFilesHandler: APIGatewayProxyHandler = async (event) => {
     const auth = new AuthMiddleware();
     const user = await auth.authenticate(event);
 
-    const userId = user.userId || user.username;
+    const userId = user.username;
     const limit = event.queryStringParameters?.limit ? parseInt(event.queryStringParameters.limit, 10) : 50;
     const validatedLimit = Math.min(Math.max(limit, 1), 100);
 
@@ -27,6 +27,7 @@ export const listFilesHandler: APIGatewayProxyHandler = async (event) => {
       200,
     );
   } catch (err: any) {
+    console.log(err);
     return ErrorMiddleware.handle(err);
   }
 };
