@@ -15,7 +15,7 @@ variable "S3_BUCKET_NAME" {
 
 variable "DYNAMODB_TABLE_NAME" {
   type    = string
-  default = "file_uploads"
+  default = "file-uploads"
 }
 
 data "aws_ssm_parameter" "cognito_user_pool_id" {
