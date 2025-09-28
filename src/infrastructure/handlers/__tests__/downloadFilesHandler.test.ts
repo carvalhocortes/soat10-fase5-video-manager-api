@@ -37,6 +37,7 @@ describe('downloadFilesHandler', () => {
     mockAuthMiddleware.authenticate.mockResolvedValue({
       userId: 'test-user',
       sub: 'test-user',
+      username: 'test-user',
       email: 'test@example.com',
     });
   });

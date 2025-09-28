@@ -10,7 +10,6 @@ export const uploadFilesHandler: APIGatewayProxyHandler = async (event) => {
   try {
     const auth = new AuthMiddleware();
     const user = await auth.authenticate(event);
-    console.log('Usuário autenticado:', user);
     const userId = user.username;
 
     let requestBody: UploadHandlerInput;

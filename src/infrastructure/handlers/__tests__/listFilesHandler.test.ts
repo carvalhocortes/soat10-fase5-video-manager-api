@@ -1,9 +1,35 @@
 import { listFilesHandler } from '../listFilesHandler';
+import { AuthMiddleware } from '../../middlewares/authMiddleware';
+import { FileUploadRepository } from '../../db/FileUploadRepository';
 
 jest.mock('../../middlewares/authMiddleware');
 jest.mock('../../db/FileUploadRepository');
 
+const MockedAuthMiddleware = AuthMiddleware as jest.MockedClass<typeof AuthMiddleware>;
+const MockedFileUploadRepository = FileUploadRepository as jest.MockedClass<typeof FileUploadRepository>;
+
 describe('listFilesHandler', () => {
+  let mockAuthMiddleware: jest.Mocked<AuthMiddleware>;
+  let mockRepository: jest.Mocked<FileUploadRepository>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    mockAuthMiddleware = new MockedAuthMiddleware() as jest.Mocked<AuthMiddleware>;
+    mockRepository = new MockedFileUploadRepository() as jest.Mocked<FileUploadRepository>;
+
+    MockedAuthMiddleware.mockImplementation(() => mockAuthMiddleware);
+    MockedFileUploadRepository.mockImplementation(() => mockRepository);
+
+    mockAuthMiddleware.authenticate.mockResolvedValue({
+      userId: 'test-user',
+      sub: 'test-user',
+      username: 'test-user',
+      email: 'test@example.com',
+    });
+
+    mockRepository.listUserUploads.mockResolvedValue([]);
+  });
   it('should exist and be a function', () => {
     expect(typeof listFilesHandler).toBe('function');
   });

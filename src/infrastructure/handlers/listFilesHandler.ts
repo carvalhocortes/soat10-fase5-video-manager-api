@@ -27,7 +27,6 @@ export const listFilesHandler: APIGatewayProxyHandler = async (event) => {
       200,
     );
   } catch (err: any) {
-    console.log(err);
     return ErrorMiddleware.handle(err);
   }
 };
