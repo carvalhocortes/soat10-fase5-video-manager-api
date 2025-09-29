@@ -71,3 +71,35 @@ resource "aws_lambda_function" "s3_event_handler" {
     }
   }
 }
+
+resource "aws_lambda_function" "sqs_event_handler" {
+  function_name    = "sqs-event-handler"
+  filename         = "../lambda.zip"
+  source_code_hash = filebase64sha256("../lambda.zip")
+  handler          = "index.sqsEventHandler"
+  runtime          = "nodejs22.x"
+  role             = "arn:aws:iam::${var.AWS_ACCOUNT_ID}:role/LabRole"
+  timeout          = 30
+
+  environment {
+    variables = {
+      FILE_UPLOAD_TABLE_NAME = var.DYNAMODB_TABLE_NAME
+    }
+  }
+}
+
+# Event source mapping to connect SQS queue to Lambda
+resource "aws_lambda_event_source_mapping" "sqs_event_source" {
+  event_source_arn = "arn:aws:sqs:us-west-2:339713125069:sqs-video-manager-api"
+  function_name    = aws_lambda_function.sqs_event_handler.arn
+  batch_size       = 1
+  enabled          = true
+
+  # Optional: Configure maximum batching window
+  maximum_batching_window_in_seconds = 5
+
+  # Optional: Configure scaling
+  scaling_config {
+    maximum_concurrency = 10
+  }
+}
