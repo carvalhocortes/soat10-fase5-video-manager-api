@@ -1,9 +1,11 @@
 import { S3Event, S3Handler } from 'aws-lambda';
 import { FileUploadRepository } from '../db/FileUploadRepository';
 import { UploadStatus } from '../../domain/FileUploadRecord';
+import { SnsPublisher } from '../services/SnsPublisher';
 
 export const s3EventHandler: S3Handler = async (event: S3Event) => {
   const repository = new FileUploadRepository();
+  const snsPublisher = new SnsPublisher();
 
   for (const record of event.Records) {
     try {
@@ -21,6 +23,10 @@ export const s3EventHandler: S3Handler = async (event: S3Event) => {
           console.log(`Updated file ${fileRecord.fileId} status to UPLOADED`);
         }
 
+        await snsPublisher.publish({
+          eventType: 'FILE_UPLOADED',
+          payload: { ...fileRecord, statusUpload: UploadStatus.UPLOADED },
+        });
         console.log(`File ${objectKey} uploaded successfully`);
       } else if (eventName.startsWith('ObjectRemoved:')) {
         console.log(`File ${objectKey} was removed`);
