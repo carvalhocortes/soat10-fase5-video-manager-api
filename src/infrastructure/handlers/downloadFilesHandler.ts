@@ -4,7 +4,7 @@ import { ErrorMiddleware } from '../middlewares/errorMiddleware';
 import { ResponseMiddleware } from '../middlewares/responseMiddleware';
 import { FileUploadRepository } from '../db/FileUploadRepository';
 import { S3UploadService } from '../services/S3UploadService';
-import { UploadStatus } from '../../domain/FileUploadRecord';
+import { FileUploadRecordStatus } from '../../domain/FileUploadRecord';
 import { NotFoundError, ValidationError, AuthorizationError } from '../../domain/CustomErrors';
 
 export const downloadFilesHandler: APIGatewayProxyHandler = async (event) => {
@@ -30,8 +30,8 @@ export const downloadFilesHandler: APIGatewayProxyHandler = async (event) => {
       throw new AuthorizationError('You do not have permission to download this file');
     }
 
-    if (fileRecord.uploadStatus !== UploadStatus.COMPLETED) {
-      throw new ValidationError(`File is not available for download. Current status: ${fileRecord.uploadStatus}`);
+    if (fileRecord.status !== FileUploadRecordStatus.COMPLETED) {
+      throw new ValidationError(`File is not available for download. Current status: ${fileRecord.status}`);
     }
 
     if (!fileRecord.processedFileS3Key) {
@@ -39,7 +39,7 @@ export const downloadFilesHandler: APIGatewayProxyHandler = async (event) => {
     }
 
     const s3Service = new S3UploadService();
-    const downloadResponse = await s3Service.generateDownloadUrl(fileRecord.processedFileS3Key, fileRecord.fileName);
+    const downloadResponse = await s3Service.generateDownloadUrl(fileRecord.processedFileS3Key, 'frames.zip');
 
     const result = {
       fileId: fileRecord.fileId,
@@ -48,7 +48,7 @@ export const downloadFilesHandler: APIGatewayProxyHandler = async (event) => {
       fileSize: fileRecord.fileSize,
       downloadUrl: downloadResponse.downloadUrl,
       expiresIn: downloadResponse.expiresIn,
-      uploadStatus: fileRecord.uploadStatus,
+      status: fileRecord.status,
     };
 
     return ResponseMiddleware.handle(result);

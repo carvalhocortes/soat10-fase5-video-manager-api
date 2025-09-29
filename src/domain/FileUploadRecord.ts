@@ -6,14 +6,14 @@ export interface FileUploadRecord {
   fileSize: number;
   s3Key: string;
   processedFileS3Key?: string;
-  uploadStatus: UploadStatus;
+  status: FileUploadRecordStatus;
   uploadUrl?: string;
   createdAt: string;
   updatedAt: string;
   expiresAt?: number;
 }
 
-export enum UploadStatus {
+export enum FileUploadRecordStatus {
   PENDING = 'PENDING',
   UPLOADED = 'UPLOADED',
   PROCESSING = 'PROCESSING',
