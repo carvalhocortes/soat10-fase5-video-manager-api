@@ -41,7 +41,7 @@ resource "aws_apigatewayv2_integration" "download_files" {
 
 resource "aws_apigatewayv2_route" "download_route" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "GET /download"
+  route_key = "GET /download/{fileId}"
   target    = "integrations/${aws_apigatewayv2_integration.download_files.id}"
 }
 
