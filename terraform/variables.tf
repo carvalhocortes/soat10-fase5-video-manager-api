@@ -10,7 +10,7 @@ variable "AWS_ACCOUNT_ID" {
 
 variable "S3_BUCKET_NAME" {
   type    = string
-  default = "soat10-video-manager-bucket"
+  default = "soat10-video-manager-bucket-personal"
 }
 
 variable "DYNAMODB_TABLE_NAME" {
@@ -24,4 +24,12 @@ data "aws_ssm_parameter" "cognito_user_pool_id" {
 
 data "aws_ssm_parameter" "cognito_client_id" {
   name = "/soat10/authorization-api/cognito_client_id"
+}
+
+data "aws_cognito_user_pool" "auth_pool" {
+  user_pool_id = data.aws_ssm_parameter.cognito_user_pool_id.value
+}
+
+data "aws_dynamodb_table" "files" {
+  name = var.DYNAMODB_TABLE_NAME
 }

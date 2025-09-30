@@ -4,7 +4,7 @@ resource "aws_lambda_function" "upload_files" {
   source_code_hash = filebase64sha256("../lambda.zip")
   handler          = "index.uploadFilesHandler"
   runtime          = "nodejs22.x"
-  role             = "arn:aws:iam::${var.AWS_ACCOUNT_ID}:role/LabRole"
+  role             = aws_iam_role.lambda_execution_role.arn
   timeout          = 10
 
   environment {
@@ -23,7 +23,7 @@ resource "aws_lambda_function" "download_files" {
   source_code_hash = filebase64sha256("../lambda.zip")
   handler          = "index.downloadFilesHandler"
   runtime          = "nodejs22.x"
-  role             = "arn:aws:iam::${var.AWS_ACCOUNT_ID}:role/LabRole"
+  role             = aws_iam_role.lambda_execution_role.arn
   timeout          = 10
 
   environment {
@@ -42,7 +42,7 @@ resource "aws_lambda_function" "list_files" {
   source_code_hash = filebase64sha256("../lambda.zip")
   handler          = "index.listFilesHandler"
   runtime          = "nodejs22.x"
-  role             = "arn:aws:iam::${var.AWS_ACCOUNT_ID}:role/LabRole"
+  role             = aws_iam_role.lambda_execution_role.arn
   timeout          = 10
 
   environment {
@@ -61,7 +61,7 @@ resource "aws_lambda_function" "s3_event_handler" {
   source_code_hash = filebase64sha256("../lambda.zip")
   handler          = "index.s3EventHandler"
   runtime          = "nodejs22.x"
-  role             = "arn:aws:iam::${var.AWS_ACCOUNT_ID}:role/LabRole"
+  role             = aws_iam_role.lambda_execution_role.arn
   timeout          = 10
 
   environment {
