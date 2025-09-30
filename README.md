@@ -124,8 +124,7 @@ src/
 │   │   ├── authMiddleware.ts
 │   │   ├── errorMiddleware.ts
 │   │   └── responseMiddleware.ts
-│   ├── services/     # Serviços externos
-│   │   └── S3UploadService.ts
+│   ├── services/     # Serviços externos │   │   └── S3UploadService.ts
 │   ├── db/          # Repositórios de dados
 │   │   └── FileUploadRepository.ts
 │   └── validation/   # Validação de entrada
