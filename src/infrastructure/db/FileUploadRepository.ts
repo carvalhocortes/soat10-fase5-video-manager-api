@@ -1,6 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, PutCommand, GetCommand, UpdateCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
-import { FileUploadRecord, CreateFileUploadRequest, UploadStatus } from '../../domain/FileUploadRecord';
+import { FileUploadRecord, CreateFileUploadRequest, FileUploadRecordStatus } from '../../domain/FileUploadRecord';
 import { v4 as uuidv4 } from 'uuid';
 
 export class FileUploadRepository {
@@ -26,7 +26,7 @@ export class FileUploadRepository {
       fileType: request.fileType,
       fileSize: request.fileSize,
       s3Key: request.s3Key,
-      uploadStatus: UploadStatus.PENDING,
+      status: FileUploadRecordStatus.PENDING,
       uploadUrl: request.uploadUrl,
       createdAt: now,
       updatedAt: now,
@@ -62,14 +62,17 @@ export class FileUploadRepository {
     return (result.Item as FileUploadRecord) || null;
   }
 
-  async updateUploadStatus(fileId: string, status: UploadStatus): Promise<void> {
+  async updateUploadStatus(fileId: string, status: FileUploadRecordStatus): Promise<void> {
     const now = new Date().toISOString();
 
     await this.client.send(
       new UpdateCommand({
         TableName: this.tableName,
         Key: { fileId },
-        UpdateExpression: 'SET uploadStatus = :status, updatedAt = :updatedAt',
+        UpdateExpression: 'SET #status = :status, updatedAt = :updatedAt',
+        ExpressionAttributeNames: {
+          '#status': 'status',
+        },
         ExpressionAttributeValues: {
           ':status': status,
           ':updatedAt': now,
@@ -105,6 +108,23 @@ export class FileUploadRepository {
         Key: { fileId },
         UpdateExpression: 'REMOVE uploadUrl SET updatedAt = :updatedAt',
         ExpressionAttributeValues: {
+          ':updatedAt': now,
+        },
+        ConditionExpression: 'attribute_exists(fileId)',
+      }),
+    );
+  }
+
+  async updateProcessedFileS3Key(fileId: string, processedFileS3Key: string): Promise<void> {
+    const now = new Date().toISOString();
+
+    await this.client.send(
+      new UpdateCommand({
+        TableName: this.tableName,
+        Key: { fileId },
+        UpdateExpression: 'SET processedFileS3Key = :processedFileS3Key, updatedAt = :updatedAt',
+        ExpressionAttributeValues: {
+          ':processedFileS3Key': processedFileS3Key,
           ':updatedAt': now,
         },
         ConditionExpression: 'attribute_exists(fileId)',

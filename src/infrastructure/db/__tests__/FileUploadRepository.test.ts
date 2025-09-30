@@ -49,7 +49,7 @@ describe('FileUploadRepository', () => {
         fileType: mockRequest.fileType,
         fileSize: mockRequest.fileSize,
         s3Key: mockRequest.s3Key,
-        uploadStatus: UploadStatus.PENDING,
+        status: FileUploadRecordStatus.PENDING,
         uploadUrl: mockRequest.uploadUrl,
       });
 
@@ -97,7 +97,7 @@ describe('FileUploadRepository', () => {
   describe('updateUploadStatus', () => {
     it('should update upload status', async () => {
       const fileId = 'file-123';
-      const newStatus = UploadStatus.UPLOADED;
+      const newStatus = FileUploadRecordStatus.UPLOADED;
 
       // Mock successful DynamoDB response
       mockSend.mockResolvedValueOnce({});

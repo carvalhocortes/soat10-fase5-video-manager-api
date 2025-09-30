@@ -47,7 +47,7 @@ describe('uploadFilesHandler', () => {
       fileType: 'video/mp4',
       fileSize: 50 * 1024 * 1024,
       s3Key: 'uploads/test-user/test-file.mp4',
-      uploadStatus: 'PENDING' as any,
+      status: 'PENDING' as any,
       uploadUrl: 'https://s3.amazonaws.com/test-bucket/test-key',
       createdAt: '2023-01-01T00:00:00Z',
       updatedAt: '2023-01-01T00:00:00Z',

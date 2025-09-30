@@ -3,7 +3,7 @@ import { downloadFilesHandler } from '../downloadFilesHandler';
 import { FileUploadRepository } from '../../db/FileUploadRepository';
 import { S3UploadService } from '../../services/S3UploadService';
 import { AuthMiddleware } from '../../middlewares/authMiddleware';
-import { UploadStatus } from '../../../domain/FileUploadRecord';
+import { FileUploadRecordStatus } from '../../../domain/FileUploadRecord';
 
 jest.mock('../../db/FileUploadRepository');
 jest.mock('../../services/S3UploadService');
@@ -69,7 +69,7 @@ describe('downloadFilesHandler', () => {
     fileSize: 1000000,
     s3Key: 'uploads/test-user/original-file.mp4',
     processedFileS3Key: 'processed/test-user/processed-file.mp4',
-    uploadStatus: UploadStatus.COMPLETED,
+    status: FileUploadRecordStatus.COMPLETED,
     uploadUrl: 'https://example.com/upload',
     createdAt: '2023-01-01T00:00:00Z',
     updatedAt: '2023-01-01T00:00:00Z',
@@ -95,13 +95,10 @@ describe('downloadFilesHandler', () => {
       fileName: 'test-video.mp4',
       downloadUrl: mockDownloadResponse.downloadUrl,
       expiresIn: 3600,
-      uploadStatus: UploadStatus.COMPLETED,
+      status: FileUploadRecordStatus.COMPLETED,
     });
     expect(mockRepository.getFileUpload).toHaveBeenCalledWith('test-file-id');
-    expect(mockS3Service.generateDownloadUrl).toHaveBeenCalledWith(
-      'processed/test-user/processed-file.mp4',
-      'test-video.mp4',
-    );
+    expect(mockS3Service.generateDownloadUrl).toHaveBeenCalledWith('processed/test-user/processed-file.mp4', 'frames.zip');
   });
 
   it('should return error 400 when fileId is not provided', async () => {
@@ -138,7 +135,7 @@ describe('downloadFilesHandler', () => {
 
   it('should return error 400 when file is not in COMPLETED status', async () => {
     const event = createMockEvent('test-file-id');
-    const pendingFileRecord = { ...mockFileRecord, uploadStatus: UploadStatus.PROCESSING };
+    const pendingFileRecord = { ...mockFileRecord, status: FileUploadRecordStatus.PROCESSING };
 
     mockRepository.getFileUpload.mockResolvedValue(pendingFileRecord);
 
