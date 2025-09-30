@@ -36,6 +36,8 @@
     "@types/aws-lambda": "^8.10.152",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.15.17",
+    "@types/uuid": "^10.0.0",
+    "@types/yup": "^0.29.14",
     "@typescript-eslint/eslint-plugin": "^8.39.1",
     "@typescript-eslint/parser": "^8.39.1",
     "eslint": "^9.18.0",

@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "postech-soat10-bucket-fase5"
+    bucket = "fiap-terraform-backend"
     key    = "github-actions-fiap/video-manager-api/terraform.tfstate"
 
     region  = "us-west-2"

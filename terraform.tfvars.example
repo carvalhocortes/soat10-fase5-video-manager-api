@@ -1,3 +1,6 @@
 # Configurações da AWS
 AWS_REGION     = "us-east-1"
 AWS_ACCOUNT_ID = "123456789012"  # Substitua pelo seu Account ID
+
+# Configurações do S3
+S3_BUCKET_NAME = "video-manager-bucket"  # Nome único para o bucket S3
