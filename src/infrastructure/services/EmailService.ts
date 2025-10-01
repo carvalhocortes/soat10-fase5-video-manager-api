@@ -18,8 +18,8 @@ export class EmailService {
       host: process.env.MAILTRAP_HOST ?? 'sandbox.smtp.mailtrap.io',
       port: parseInt(process.env.MAILTRAP_PORT ?? '2525'),
       auth: {
-        user: process.env.MAILTRAP_USER! ?? 'ef509f7efe2e8d',
-        pass: process.env.MAILTRAP_PASS! ?? 'abcbe22be2bd36',
+        user: process.env.MAILTRAP_USER!,
+        pass: process.env.MAILTRAP_PASS!,
       },
     });
   }
