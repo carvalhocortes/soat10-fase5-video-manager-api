@@ -1,6 +1,7 @@
 import { SQSHandler } from 'aws-lambda';
 import { FileUploadRepository } from '../db/FileUploadRepository';
 import { FileUploadRecordStatus } from '../../domain/FileUploadRecord';
+import { EmailService } from '../services/EmailService';
 
 export interface ProcessVideoEvent {
   eventType: 'PROCESS_VIDEO_COMPLETED' | 'PROCESS_VIDEO_FAILURE';
@@ -26,6 +27,7 @@ export interface ProcessVideoFailurePayload {
 
 export const sqsEventHandler: SQSHandler = async (event) => {
   const repository = new FileUploadRepository();
+  const emailService = new EmailService();
 
   for (const record of event.Records) {
     try {
@@ -68,6 +70,13 @@ export const sqsEventHandler: SQSHandler = async (event) => {
 
           const failurePayload = payload as ProcessVideoFailurePayload;
           console.error(`Failed to process video ${fileId}: ${failurePayload.error}`);
+
+          try {
+            await emailService.sendVideoProcessingFailureEmail(failurePayload.userId, failurePayload.fileName);
+            console.log(`Failure notification email sent to user: ${failurePayload.userId}`);
+          } catch (emailError) {
+            console.error('Failed to send failure notification email:', emailError);
+          }
           break;
         }
 

@@ -1,14 +1,18 @@
 import { sqsEventHandler } from '../sqsEventHandler';
 import { FileUploadRepository } from '../../db/FileUploadRepository';
 import { FileUploadRecordStatus } from '../../../domain/FileUploadRecord';
+import { EmailService } from '../../services/EmailService';
 import { SQSEvent, SQSRecord, Context } from 'aws-lambda';
 
-// Mock do FileUploadRepository
 jest.mock('../../db/FileUploadRepository');
 const MockedFileUploadRepository = FileUploadRepository as jest.MockedClass<typeof FileUploadRepository>;
 
+jest.mock('../../services/EmailService');
+const MockedEmailService = EmailService as jest.MockedClass<typeof EmailService>;
+
 describe('sqsEventHandler', () => {
   let mockRepository: jest.Mocked<FileUploadRepository>;
+  let mockEmailService: jest.Mocked<EmailService>;
   const mockContext: Context = {
     callbackWaitsForEmptyEventLoop: false,
     functionName: 'test-function',
@@ -29,10 +33,13 @@ describe('sqsEventHandler', () => {
     mockRepository = new MockedFileUploadRepository() as jest.Mocked<FileUploadRepository>;
     MockedFileUploadRepository.mockImplementation(() => mockRepository);
 
-    // Setup default mocks
+    mockEmailService = new MockedEmailService() as jest.Mocked<EmailService>;
+    MockedEmailService.mockImplementation(() => mockEmailService);
+
     mockRepository.getFileUpload = jest.fn();
     mockRepository.updateUploadStatus = jest.fn();
     mockRepository.updateProcessedFileS3Key = jest.fn();
+    mockEmailService.sendVideoProcessingFailureEmail = jest.fn();
   });
 
   const createSQSEvent = (eventType: string, payload: any): SQSEvent => {
@@ -126,12 +133,12 @@ describe('sqsEventHandler', () => {
   });
 
   describe('PROCESS_VIDEO_FAILURE event', () => {
-    it('should update status to FAILED when a failure event is processed', async () => {
+    it('should update status to FAILED and send failure notification email', async () => {
       const fileId = 'test-file-id';
       const payload = {
         fileId,
         fileName: 'test.mp4',
-        userId: 'user-123',
+        userId: 'user@example.com',
         s3Key: 'videos/test.mp4',
         status: 'FAILED' as const,
         error: 'Processing failed',
@@ -144,6 +151,7 @@ describe('sqsEventHandler', () => {
 
       mockRepository.getFileUpload.mockResolvedValue(mockFileRecord as any);
       mockRepository.updateUploadStatus.mockResolvedValue();
+      mockEmailService.sendVideoProcessingFailureEmail.mockResolvedValue();
 
       const event = createSQSEvent('PROCESS_VIDEO_FAILURE', payload);
 
@@ -151,6 +159,35 @@ describe('sqsEventHandler', () => {
 
       expect(mockRepository.getFileUpload).toHaveBeenCalledWith(fileId);
       expect(mockRepository.updateUploadStatus).toHaveBeenCalledWith(fileId, FileUploadRecordStatus.FAILED);
+      expect(mockEmailService.sendVideoProcessingFailureEmail).toHaveBeenCalledWith('user@example.com', 'test.mp4');
+    });
+
+    it('should continue processing even if email sending fails', async () => {
+      const fileId = 'test-file-id';
+      const payload = {
+        fileId,
+        fileName: 'test.mp4',
+        userId: 'user@example.com',
+        s3Key: 'videos/test.mp4',
+        status: 'FAILED' as const,
+        error: 'Processing failed',
+      };
+
+      const mockFileRecord = {
+        fileId,
+        status: FileUploadRecordStatus.PROCESSING,
+      };
+
+      mockRepository.getFileUpload.mockResolvedValue(mockFileRecord as any);
+      mockRepository.updateUploadStatus.mockResolvedValue();
+      mockEmailService.sendVideoProcessingFailureEmail.mockRejectedValue(new Error('Email service error'));
+
+      const event = createSQSEvent('PROCESS_VIDEO_FAILURE', payload);
+
+      await expect(sqsEventHandler(event, mockContext, jest.fn())).resolves.toBeUndefined();
+
+      expect(mockRepository.updateUploadStatus).toHaveBeenCalledWith(fileId, FileUploadRecordStatus.FAILED);
+      expect(mockEmailService.sendVideoProcessingFailureEmail).toHaveBeenCalled();
     });
   });
 
