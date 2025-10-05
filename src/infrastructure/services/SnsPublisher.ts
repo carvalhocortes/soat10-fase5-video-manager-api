@@ -1,4 +1,4 @@
-import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
+import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 
 export interface SnsEventMessage {
   eventType: string;
@@ -11,7 +11,7 @@ export class SnsPublisher {
 
   constructor() {
     this.sns = new SNSClient({ region: process.env.AWS_REGION! });
-    this.topicArn = process.env.SNS_TOPIC_ARN! ?? 'arn:aws:sns:us-west-2:339713125069:sns-video-manager-api';
+    this.topicArn = process.env.SNS_TOPIC_ARN! ?? `arn:aws:sns:us-west-2:381492156649:sns-video-manager-api`;
   }
 
   async publish(message: SnsEventMessage): Promise<void> {

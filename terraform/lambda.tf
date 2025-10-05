@@ -4,7 +4,7 @@ resource "aws_lambda_function" "upload_files" {
   source_code_hash = filebase64sha256("../lambda.zip")
   handler          = "index.uploadFilesHandler"
   runtime          = "nodejs22.x"
-  role             = aws_iam_role.lambda_execution_role.arn
+  role             = "arn:aws:iam::${var.AWS_ACCOUNT_ID}:role/LabRole"
   timeout          = 10
 
   environment {
@@ -23,7 +23,7 @@ resource "aws_lambda_function" "download_files" {
   source_code_hash = filebase64sha256("../lambda.zip")
   handler          = "index.downloadFilesHandler"
   runtime          = "nodejs22.x"
-  role             = aws_iam_role.lambda_execution_role.arn
+  role             = "arn:aws:iam::${var.AWS_ACCOUNT_ID}:role/LabRole"
   timeout          = 10
 
   environment {
@@ -42,7 +42,7 @@ resource "aws_lambda_function" "list_files" {
   source_code_hash = filebase64sha256("../lambda.zip")
   handler          = "index.listFilesHandler"
   runtime          = "nodejs22.x"
-  role             = aws_iam_role.lambda_execution_role.arn
+  role             = "arn:aws:iam::${var.AWS_ACCOUNT_ID}:role/LabRole"
   timeout          = 10
 
   environment {
@@ -61,7 +61,7 @@ resource "aws_lambda_function" "s3_event_handler" {
   source_code_hash = filebase64sha256("../lambda.zip")
   handler          = "index.s3EventHandler"
   runtime          = "nodejs22.x"
-  role             = aws_iam_role.lambda_execution_role.arn
+  role             = "arn:aws:iam::${var.AWS_ACCOUNT_ID}:role/LabRole"
   timeout          = 10
 
   environment {
@@ -88,18 +88,3 @@ resource "aws_lambda_function" "sqs_event_handler" {
   }
 }
 
-# Event source mapping to connect SQS queue to Lambda
-resource "aws_lambda_event_source_mapping" "sqs_event_source" {
-  event_source_arn = "arn:aws:sqs:us-west-2:339713125069:sqs-video-manager-api"
-  function_name    = aws_lambda_function.sqs_event_handler.arn
-  batch_size       = 1
-  enabled          = true
-
-  # Optional: Configure maximum batching window
-  maximum_batching_window_in_seconds = 5
-
-  # Optional: Configure scaling
-  scaling_config {
-    maximum_concurrency = 10
-  }
-}

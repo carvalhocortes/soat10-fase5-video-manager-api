@@ -1,5 +1,5 @@
-import { SnsPublisher, SnsEventMessage } from '../SnsPublisher';
-import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
+import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
+import { SnsEventMessage, SnsPublisher } from '../SnsPublisher';
 
 jest.mock('@aws-sdk/client-sns');
 

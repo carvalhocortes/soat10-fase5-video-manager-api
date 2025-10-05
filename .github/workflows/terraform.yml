@@ -22,6 +22,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Setup Terraform
@@ -45,6 +46,8 @@ jobs:
       - name: Terraform Plan
         id: plan
         if: github.event_name == 'pull_request'
+        env:
+          TF_VAR_AWS_ACCOUNT_ID: ${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}
         run: terraform plan -no-color -input=false
         working-directory: ./terraform
         continue-on-error: true
@@ -81,6 +84,8 @@ jobs:
             })
 
       - name: Terraform Plan Status
+        env:
+          TF_VAR_AWS_ACCOUNT_ID: ${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
@@ -94,5 +99,7 @@ jobs:
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          TF_VAR_AWS_ACCOUNT_ID: ${{ secrets.TF_VAR_AWS_ACCOUNT_ID }}
         run: terraform apply -auto-approve -input=false
         working-directory: ./terraform
