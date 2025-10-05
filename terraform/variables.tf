@@ -4,8 +4,7 @@ variable "AWS_REGION" {
 }
 
 variable "AWS_ACCOUNT_ID" {
-  type    = string
-  default = "339713125069"
+  type = string
 }
 
 variable "S3_BUCKET_NAME" {
